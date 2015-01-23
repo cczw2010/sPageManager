@@ -116,11 +116,15 @@
 	window.sPageManager = {
 		/**
 		 * 初始化页面管理器，基于classname
-		 * @param globalanim 初始全局动画类型：none(默认)|move|moveFade|rotateCube|rotatePush|rotateFold|rotateRoom|rotateCarousel|flip
+		 * @param globalanim 初始全局默认动画类型：none(默认)|move|moveFade|rotateCube|rotatePush|rotateFold|rotateRoom|rotateCarousel|flip
+		 * @param globaldistance 初始全局默认动画方向：h(默认)|v
 		 */
-		init : function(globalanim){
-			if (globalanim && globalanim in _anims) {
+		init : function(globalanim,globaldistance){
+			if (globalanim && _anims.indexOf(globalanim)>-1) {
 				_defanim = globalanim;
+			}
+			if (globaldistance && _distances.indexOf(globaldistance)>-1) {
+				_defdistance = globaldistance;
 			}
 		},
 		/**
