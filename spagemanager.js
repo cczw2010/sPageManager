@@ -115,7 +115,7 @@
 	 */
 	window.sPageManager = {
 		/**
-		 * 初始化页面管理器，基于classname
+		 * 设置页面管理器的全局变量，非必须
 		 * @param globalanim 初始全局默认动画类型：none(默认)|move|moveFade|rotateCube|rotatePush|rotateFold|rotateRoom|rotateCarousel|flip
 		 * @param globaldistance 初始全局默认动画方向：h(默认)|v
 		 */
