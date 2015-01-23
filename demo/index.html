@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+	<meta name="author" contect="awen"/ >
+	<meta name="email" contect="71752352@qq.com"/ >
+	<link rel="stylesheet" href="../pagetraner.min.css">
+	<link rel="stylesheet" href="demo.css">
+	<script src="../jquery-1.7.2.min.js"></script>
+	<script src="../spagemanager.min.js"></script>
+	<title>页面切换动画</title>
+</head>
+<body>
+	<div class="pt-main">
+		<div id="pt-page-1" class="pt-page">page-1</div>
+		<div id="pt-page-2" class="pt-page">page-2</div>
+		<div id="pt-page-3" class="pt-page">page-3</div>
+		<div id="pt-page-4" class="pt-page">page-4</div>
+		<div id="pt-page-5" class="pt-page">page-5</div>
+		<div id="pt-page-6" class="pt-page">page-6</div>
+		<div id="pt-page-7" class="pt-page">page-7</div>
+		<div id="pt-page-8" class="pt-page">page-8</div>
+		<div id="pt-page-9" class="pt-page">page-9</div>
+	</div>
+	<!-- 浮动操作区域 -->
+	<div class="fixcontainer">
+		<div>请在webkit内核下使用</div>
+		<label for="">动画效果：</label>
+		<select id="animtype"></select><br>
+		<label for="">方向：</label>
+		<select id="animdistance">
+			<option value="h">横向</option>
+			<option value="v">纵向</option>
+		</select><br>
+		<span class="fixbtn pt-btn-next">next</span>
+		<span class="fixbtn pt-btn-back">back</span>
+	</div>
+<script>
+//创建动画列表
+var supportanims = sPageManager.getSupportAnims();
+for (var i = 0,l=supportanims.length; i < l; i++) {
+	$('#animtype').append('<option value="'+supportanims[i]+'">'+supportanims[i]+'</option>');
+}
+// 前进
+$('.pt-btn-next').on('click',function(){
+	var anim = $('#animtype').val(),
+		distance = $('#animdistance').val(),
+		curPage = sPageManager.getCurrentPage(),
+		curidx = curPage?$(curPage.sel).index():$('.pt-page-current').index(),
+		nextidx,
+		pages = $('.pt-page');
+	if (curidx==pages.length-1) {
+		return;
+	}
+	nextidx = curidx+1;
+	sPageManager.show('#'+pages.eq(nextidx).attr('id'),anim,distance);
+});
+// 后退
+$('.pt-btn-back').on('click',function(){
+	sPageManager.back(true);
+});
+</script>
+</body>
+</html>
