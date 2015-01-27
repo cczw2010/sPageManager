@@ -18,9 +18,6 @@
 		*/
 		sPageManager.init(globalanim,globaldistance)
 
-
-
-
 * 显示页面
 
 		/**
@@ -39,7 +36,7 @@
 		 */
 		sPageManager.back(stoponlast)
 
-* 基础动画高级接口（非本库page对象组合动画，不再app页面栈中体现，只控制单页，可以自定义拼成多种动画切换效果，后期将封装提供自定义page对象组合动画的接口）
+* 基础动画高级接口（非本库page对象组合动画，不在本库页面栈中统一管理）
 
 		/**
 		 * 页面切换基本类,依托于pageanimations动画css3库的修改库仅用于webkit内核浏览器
@@ -57,6 +54,22 @@
 * 获取支持的动画列表
 
 		sPageManager.getSupportAnims()
+
+* 扩展页面动画列表库，扩展后可在show接口中使用
+
+		/**
+	    * @param  string animname 		要扩展的动画类型名称，如果与已有动画重名将覆盖已有动画
+	    * @param  string distance 		要扩展的动画类型的方向（v|h）
+	    * @param  string inAnimType		进入页面的动画效果，参见anim接口注释
+	    * @param  string inDistance		进入页面的方向，参见anim接口注释
+	    * @param  int inDelay  			进入页面动画执行的延时时间参见anim接口注释
+	    * @param  string outAnimType	退出页面的动画效果，参见anim接口注释
+	    * @param  string outDistance	退出页面的方向，参见anim接口注释
+	    * @param  int outDelay 			退出页面动画执行的延时时间参见anim接口注释
+	    * @return boolean 
+	    */
+	    sPageManager.extend(animname,distance,inAnimType,inDistance,inDelay,outAnimType,outDistance,outDelay)
+	
 
 * 获取页面对象历史栈
 

@@ -37,6 +37,9 @@
 		<span class="fixbtn pt-btn-back">back</span>
 	</div>
 <script>
+//扩展动画库
+sPageManager.extend('extend_test','v','flip','Bottom',300,'moveFade','Top',0);
+sPageManager.extend('extend_test','h','flip','Right',300,'moveFade','Left',0);
 //创建动画列表
 var supportanims = sPageManager.getSupportAnims();
 for (var i = 0,l=supportanims.length; i < l; i++) {

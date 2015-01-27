@@ -4,14 +4,29 @@
  * 2 所有的页面样式名为：pt-page；内核不编辑页面的展现样式，请自根据app自定义，具体参考demo。
  */
 ;(function($){
-	var lastPage=null,			//上一页对象
+	var lastPage=null,		//上一页对象
 		curPage=null,				//当前页对象
 		//页面栈，记录当前的所有页面记录，后入先出（返回）	
 		pageStack = [],
 		//对pageanimations动画库列表
 		_anims = ['none','move','moveFade','flip','rotateCube','rotatePush','rotateFold','rotateCarousel'],
 		_defanim = 'none', //默认全局动画方式
-		_animsSpacile = ['rotateCube','rotateCarousel'], //动画列表中的进出同向动画
+		//自定义动画处理栈,优先级比默认的高,
+		_animsProcess = {
+			'rotateCube':{
+				//垂直：[inAnimType,inDistance,inDelay,outAnimType,outDistance,outDelay]
+				'v':['rotateCube','Top',0,'rotateCube','Top',0],
+				'h':['rotateCube','Left',0,'rotateCube','Left',0],
+			},
+			'rotateCarousel':{
+				'v':['rotateCarousel','Top',0,'rotateCarousel','Top',0],
+				'h':['rotateCarousel','Left',0,'rotateCarousel','Left',0],
+			},
+			'flip':{
+				'v':['flip','Bottom',500,'flip','Top',0],
+				'h':['flip','Right',500,'flip','Left',0],
+			}
+		},
 		_distances = ['v','h'], //支持方向列表
 		_defdistance = 'h',	//默认全局方向
 		/**
@@ -30,28 +45,71 @@
 
 	// 根据动画类型获取in动画参数数组
 	function _getAnimIn(anim,distance,isback){
-		var delay = anim=="flip"?500:0;
-		//同向动画的进入动画与退出动画是一个方向
-		if(_animsSpacile.indexOf(anim)>-1){
-			return _getAnimOut(anim,distance,isback);
+		//后期考虑统一delay处理方式
+		var _delay = 0,
+			_anim = anim,
+			_distance = distance,
+			_animlist;
+		//自定义动画处理栈的优先级比较高
+		if(anim in _animsProcess){
+			_animlist = _animsProcess[anim];
+			if(!(distance in _animlist)){
+				return false;
+			}
+			_anim = _animlist[distance][0];
+			_distance = _animlist[distance][1];
+			_delay = _animlist[distance][2];
+		}else{
+			_distance = distance=='v'?'Bottom':'Right';
 		}
 
 		if(isback){
-			distance = distance=='v'?'Top':'Left';
-		}else{
-			distance = distance=='v'?'Bottom':'Right';
+			_distance = _getReverseDistance(_distance);
 		}
-		return [anim,distance,delay];
+		return [_anim,_distance,_delay];
 	}
 	// 根据动画类型获取out动画参数数组
 	function _getAnimOut(anim,distance,isback){
+		var _delay = 0,
+			_anim=anim,
+			_distance = distance,
+			_animlist;
+		//自定义动画处理栈的优先级比较高
+		if(anim in _animsProcess){
+			_animlist = _animsProcess[anim];
+			if(!(distance in _animlist)){
+				return false;
+			}
+			_anim = _animlist[distance][3];
+			_distance = _animlist[distance][4];
+			_delay = _animlist[distance][5];
+		}else{
+			_distance = distance=='v'?'Top':'Left';
+		}
 		//除了判断回退
 		if(isback){
-			distance = distance=='v'?'Bottom':'Right';
-		}else{
-			distance = distance=='v'?'Top':'Left';
+			_distance = _getReverseDistance(_distance);
 		}
-		return [anim,distance,0];
+		return [_anim,_distance,_delay];
+	}
+	//获取反方向
+	function _getReverseDistance(distance){
+		var reverse = '';
+		switch(distance){
+			case 'Top':
+				reverse = 'Bottom';
+			break;
+			case 'Bottom':
+				reverse = 'Top';
+			break;
+			case 'Left':
+				reverse = 'Right';
+			break;
+			case 'Right':
+				reverse = 'Left';
+			break;
+		}
+		return reverse;
 	}
 	/**
 	 * 页面切换基本类,依托于pageanimations动画css3库的修改库仅用于webkit内核浏览器
@@ -111,6 +169,33 @@
 		}
 	}
 	/**
+	 * 扩展支持的动画列表库
+	 * @param  string animname 		要扩展的动画类型名称，如果与已有动画重名将覆盖已有动画
+	 * @param  string distance 		要扩展的动画类型的方向（v|h）
+	 * @param  string inAnimType  进入页面的动画效果，参见anim接口注释
+	 * @param  string inDistance  进入页面的方向，参见anim接口注释
+	 * @param  int inDelay  			进入页面动画执行的延时时间参见anim接口注释
+	 * @param  string outAnimType 退出页面的动画效果，参见anim接口注释
+	 * @param  string outDistance 退出页面的方向，参见anim接口注释
+	 * @param  int outDelay 			退出页面动画执行的延时时间参见anim接口注释
+	 * @return boolean 
+	 */
+	function _extend(animname,distance,inAnimType,inDistance,inDelay,outAnimType,outDistance,outDelay){
+		//简单的参数判断
+		if(!animname || !inDistance || !outDistance || !distance ||
+			!inAnimType || _anims.indexOf(inAnimType)==-1 ||
+			!outAnimType || _anims.indexOf(outAnimType)==-1){
+			return false;
+		}else{
+			if(!(animname in _animsProcess)){
+				_animsProcess[animname] = {};
+				_anims.push(animname);
+			}
+			_animsProcess[animname][distance]=[inAnimType,inDistance,inDelay||0,outAnimType,outDistance,outDelay||0];
+			return true;
+		}
+	}
+	/**
 	 * 对外提供接口
 	 */
 	window.sPageManager = {
@@ -141,6 +226,9 @@
 				page;
 			// console.log(animIn,animOut);
 			if ($(sel).length==0) {return false;}
+			if(!animIn || !animOut){
+				return false;
+			}
 			page = new pageObj(sel,anim,distance);
 			pageStack.push(page);
 			if (curPage) {
@@ -154,6 +242,9 @@
 		//基础页面动画高级接口，该接口使用后显示的不是本库的page对象，
 		//所以不再页面栈中体现，只是给用户提供了高级自定义动画接口，后期增加扩展page切换动画组合接口
 		anim:_pageanim,
+
+		//扩展动画接口
+		extend : _extend,
 		/**
 		 * 页面后退 默认使用页面展示时动画的反向动画
 		 * @param boolean stoponlast 是否保留最后一页 默认false
@@ -168,6 +259,9 @@
 			//inout都是以当前页为准
 			animOut = _getAnimOut(curPage.anim,curPage.distance,true);
 			animIn = _getAnimIn(curPage.anim,curPage.distance,true);
+			if(!animIn || !animOut){
+				return null;
+			}
 			if(!stoponlast || lastPage){
 				_pageanim(curPage.sel,animOut[0],'Out',animOut[1],animOut[2]);
 				pageStack.pop();
