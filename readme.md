@@ -38,11 +38,26 @@
 		 * @return 成功返回当前页对象，无责返回null
 		 */
 		sPageManager.back(stoponlast)
-		
+
+* 基础动画高级接口（非本库page对象组合动画，不再app页面栈中体现，只控制单页，可以自定义拼成多种动画切换效果，后期将封装提供自定义page对象组合动画的接口）
+
+		/**
+		 * 页面切换基本类,依托于pageanimations动画css3库的修改库仅用于webkit内核浏览器
+		 * @param string sel 当前页的css selector
+		 * @param string animtype css3中支持的初始动画类型(none不需要distance和delay个参数)：
+														none|move|moveFade|rotateCube|rotatePush|rotateFold|rotateRoom|rotateCarousel|flip
+		 * @param string inout 进出（显示和隐藏页面）:In|Out
+		 * @param string distance 方向
+		 *                      Left|Right|Top|Bottom
+		 * @param number delay animate延时执行，多用于前后两组动画衔接，例如animtype为flip时
+		 *                     100|180|200|300|400|500|700|1000
+		 */
+		sPageManager.anim(sel,animtype,inout,distance,delay)
+
 * 获取支持的动画列表
 
 		sPageManager.getSupportAnims()
-		
+
 * 获取页面对象历史栈
 
 		sPageManager.getStack()

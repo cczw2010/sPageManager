@@ -55,7 +55,7 @@
 	}
 	/**
 	 * 页面切换基本类,依托于pageanimations动画css3库的修改库仅用于webkit内核浏览器
-	 * @param string sel 当前页的selector
+	 * @param string sel 当前页的css selector
 	 * @param string animtype css3中支持的初始动画类型(none不需要distance和delay个参数)：
 	 												none|move|moveFade|rotateCube|rotatePush|rotateFold|rotateRoom|rotateCarousel|flip
 	 * @param string inout 进出（显示和隐藏页面）:In|Out
@@ -151,6 +151,9 @@
 			_pageanim(sel,animIn[0],'In',animIn[1],animIn[2]);
 			return curPage;
 		},
+		//基础页面动画高级接口，该接口使用后显示的不是本库的page对象，
+		//所以不再页面栈中体现，只是给用户提供了高级自定义动画接口，后期增加扩展page切换动画组合接口
+		anim:_pageanim,
 		/**
 		 * 页面后退 默认使用页面展示时动画的反向动画
 		 * @param boolean stoponlast 是否保留最后一页 默认false
