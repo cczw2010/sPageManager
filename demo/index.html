@@ -57,7 +57,9 @@ $('.pt-btn-next').on('click',function(){
 		return;
 	}
 	nextidx = curidx+1;
-	sPageManager.show('#'+pages.eq(nextidx).attr('id'),anim,distance);
+	sPageManager.show('#'+pages.eq(nextidx).attr('id'),anim,distance,function(){
+		console.log(this);
+	});
 });
 // 后退
 $('.pt-btn-back').on('click',function(){

@@ -24,9 +24,10 @@
 		 * @param  string sel  页面标签的id选择器,例如（#pt-page1）
 		 * @param  string anim 支持的动画类型,默认为全局设定的
 		 * @param  string distance 动画的方向，v|h，默认是横向(h)
+	 	 * @param  function func 页面显示动画结束后的回调函数
 		 * @return object 当前页面对象
 		 */
-		sPageManager.show(sel,anim,distance)
+		sPageManager.show(sel,anim,distance,func)
 		
 * 页面后退 默认使用页面展示时动画的反向动画
 
@@ -48,8 +49,9 @@
 		 *                      Left|Right|Top|Bottom
 		 * @param number delay animate延时执行，多用于前后两组动画衔接，例如animtype为flip时
 		 *                     100|180|200|300|400|500|700|1000
+	 	 * @param function func 页面显示动画结束后的回调函数
 		 */
-		sPageManager.anim(sel,animtype,inout,distance,delay)
+		sPageManager.anim(sel,animtype,inout,distance,delay,func)
 
 * 获取支持的动画列表
 

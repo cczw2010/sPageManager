@@ -121,8 +121,9 @@
 	 *                      Left|Right|Top|Bottom
 	 * @param number delay animate延时执行，多用于前后两组动画衔接，例如animtype为flip时
 	 *                     100|180|200|300|400|500|700|1000
+	 * @param function func 页面动画结束后的回调函数
 	 */
-	function _pageanim(pselector,animtype,inout,distance,delay){
+	function _pageanim(pselector,animtype,inout,distance,delay,func){
 		var page = $(pselector),
 			anim = animtype=='none'||!animtype?'':'pt-page-'+animtype+distance+inout,
 			onTop = inout=="Out"?false:true;
@@ -133,9 +134,7 @@
 		if (animtype!="none") {
 			page.on('webkitAnimationEnd',function(e) {
 				_resetPage(this);
-			});
-			page.on('webkitTransitionEnd',function(e) {
-				_resetPage(this);
+				func && func.call(this,inout);
 			});
 		}
 
@@ -155,6 +154,7 @@
 		//非动画效果要实时清除页面效果以及临时数据
 		if (animtype=="none") {
 				_resetPage(page);
+				func && func.call(page[0],inout);
 		}
 	}
 	/**
@@ -217,9 +217,10 @@
 		 * @param  string sel  页面标签的id选择器,例如（#pt-page1）
 		 * @param  string anim 支持的动画类型,默认为全局设定的
 		 * @param  string distance 动画的方向，v|h，默认是横向(h)
+	 	 * @param function func 页面显示动画结束后的回调函数
 		 * @return object 当前页面对象
 		 */
-		show : function(sel,anim,distance){
+		show : function(sel,anim,distance,func){
 			//inout都是以当前页为准
 			var _anim = (typeof anim != 'undefined' && _anims.indexOf(anim)>-1)?anim:_defanim,
 				_distance = (typeof distance != 'undefined' && _distances.indexOf(distance)>-1)?distance:_defdistance,
@@ -237,7 +238,7 @@
 			}
 			lastPage = curPage;
 			curPage = page;
-			_pageanim(sel,animIn[0],'In',animIn[1],animIn[2]);
+			_pageanim(sel,animIn[0],'In',animIn[1],animIn[2],func);
 			return curPage;
 		},
 		//基础页面动画高级接口，该接口使用后显示的不是本库的page对象，
