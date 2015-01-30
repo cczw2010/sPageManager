@@ -39,8 +39,8 @@
 			this.sel= sel;
 			this.hash = location.hash;	//如crow5,github都是通过hash来定位和管理页面实例栈的,所以该项也很重要，在回退的同时要
 			this.singleInstance = false; //是否单例,暂未实现
-			this.anim = (typeof anim != 'undefined' && _anims.indexOf(anim)>-1)?anim:_defanim;
-			this.distance = (typeof distance != 'undefined' && _distances.indexOf(distance)>-1)?distance:_defdistance;
+			this.anim = anim;
+			this.distance = distance;
 		};
 
 	// 根据动画类型获取in动画参数数组
@@ -221,15 +221,16 @@
 		 */
 		show : function(sel,anim,distance){
 			//inout都是以当前页为准
-			var animIn = _getAnimIn(anim,distance),
-				animOut = _getAnimOut(anim,distance),
+			var _anim = (typeof anim != 'undefined' && _anims.indexOf(anim)>-1)?anim:_defanim,
+				_distance = (typeof distance != 'undefined' && _distances.indexOf(distance)>-1)?distance:_defdistance,
+				animIn = _getAnimIn(_anim,_distance),
+				animOut = _getAnimOut(_anim,_distance),
 				page;
-			// console.log(animIn,animOut);
 			if ($(sel).length==0) {return false;}
 			if(!animIn || !animOut){
 				return false;
 			}
-			page = new pageObj(sel,anim,distance);
+			page = new pageObj(sel,_anim,_distance);
 			pageStack.push(page);
 			if (curPage) {
 				_pageanim(curPage.sel,animOut[0],'Out',animOut[1],animOut[2]);
